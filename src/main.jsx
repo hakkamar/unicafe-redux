@@ -1,36 +1,48 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import React from "react";
+import ReactDOM from "react-dom/client";
 
-import { createStore } from 'redux'
-import reducer from './reducer'
+// createStore -> configureStore otetaan myöhemmin käyttöön...
+import { createStore } from "redux";
+import counterReducer from "./reducer";
 
-const store = createStore(reducer)
+const store = createStore(counterReducer);
+
+store.subscribe(() => {
+  const storeNow = store.getState();
+  console.log("storeNow ", storeNow);
+});
 
 const App = () => {
-  const good = () => {
+  const klikkaus = (nappi) => () => {
+    //console.log("klikattu nappia ", nappi);
+    store.dispatch({ type: nappi });
+  };
+
+  const zero = () => {
     store.dispatch({
-      type: 'GOOD'
-    })
-  }
+      type: "ZERO",
+    });
+  };
 
   return (
     <div>
-      <button onClick={good}>good</button> 
-      <button>ok</button> 
-      <button>bad</button>
-      <button>reset stats</button>
+      <h2>anna palautetta</h2>
+      <button onClick={klikkaus("GOOD")}>good</button>
+      <button onClick={klikkaus("OK")}>ok</button>
+      <button onClick={klikkaus("BAD")}>bad</button>
+      <button onClick={zero}>reset stats</button>
       <div>good {store.getState().good}</div>
-      <div>ok</div>
-      <div>bad</div>
+      <div>ok {store.getState().ok}</div>
+      <div>bad {store.getState().bad}</div>
     </div>
-  )
-}
+  );
+};
 
-const root = ReactDOM.createRoot(document.getElementById('root'))
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
 const renderApp = () => {
-  root.render(<App />)
-}
+  root.render(<App />);
+};
 
-renderApp()
-store.subscribe(renderApp)
+renderApp();
+store.subscribe(renderApp);
